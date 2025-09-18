@@ -1,49 +1,30 @@
 pipeline {
-    agent none
+    agent any // Or a specific agent for the Jenkins server itself
+
     stages {
-        stage('Build Maven App') {
+        stage('Maven Application Build and Test') {
+            agent {
+                docker { image 'maven:3.8.5-jdk-11' }
+            }
             steps {
-                script {
-                    docker.image('maven:3.8.5-openjdk-17').inside {
-                        sh 'git clone https://github.com/waypointcns/Multi-stage-multi-agent-' // Replace with your repo
-                        dir('maven-hello-world') {
-                            sh 'mvn clean package -DskipTests'
-                            sh 'docker build -t my-maven-app .'
-                        }
-                    }
+                dir('maven-app') { // Assuming your Maven app is in a 'maven-app' subdirectory
+                    sh 'mvn clean install'
+                    sh 'mvn test'
                 }
             }
         }
 
-        stage('Build Node.js App') {
+        stage('Node.js Application Build and Test') {
+            agent {
+                docker { image 'node:16-alpine' }
+            }
             steps {
-                script {
-                    docker.image('node:18-alpine').inside {
-                        sh 'git clone https://github.com/waypointcns/Multi-stage-multi-agent-' // Replace with your repo
-                        dir('node-hello-world') {
-                            sh 'npm install'
-                            sh 'docker build -t my-node-app .'
-                        }
-                    }
+                dir('nodejs-app') { // Assuming your Node.js app is in a 'nodejs-app' subdirectory
+                    sh 'npm install'
+                    sh 'npm test'
                 }
             }
         }
-
-        stage('Run Docker Containers') {
-            steps {
-                sh 'docker run -d -p 8080:8080 --name maven-app my-maven-app'
-                sh 'docker run -d -p 3000:3000 --name node-app my-node-app'
-                // Add steps to verify applications are running, e.g., curl commands
-            }
-        }
-    }
-
-    post {
-        always {
-            sh 'docker stop maven-app || true'
-            sh 'docker rm maven-app || true'
-            sh 'docker stop node-app || true'
-            sh 'docker rm node-app || true'
-        }
+        // Add more common stages or specific deployment stages here
     }
 }
