@@ -1,8 +1,5 @@
 pipeline {
-    agent {
-        label 'master' // Assuming you have a Docker agent configured with this label
-    }
-
+    agent none
     stages {
         stage('Build Maven App') {
             steps {
