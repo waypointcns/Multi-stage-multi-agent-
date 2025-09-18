@@ -8,7 +8,7 @@ pipeline {
             steps {
                 script {
                     docker.image('maven:3.8.5-openjdk-17').inside {
-                        sh 'git clone https://github.com/your-repo/maven-hello-world.git' // Replace with your repo
+                        sh 'git clone https://github.com/waypointcns/Multi-stage-multi-agent-' // Replace with your repo
                         dir('maven-hello-world') {
                             sh 'mvn clean package -DskipTests'
                             sh 'docker build -t my-maven-app .'
@@ -22,7 +22,7 @@ pipeline {
             steps {
                 script {
                     docker.image('node:18-alpine').inside {
-                        sh 'git clone https://github.com/your-repo/node-hello-world.git' // Replace with your repo
+                        sh 'git clone https://github.com/waypointcns/Multi-stage-multi-agent-' // Replace with your repo
                         dir('node-hello-world') {
                             sh 'npm install'
                             sh 'docker build -t my-node-app .'
